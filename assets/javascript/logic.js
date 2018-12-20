@@ -20,7 +20,7 @@ var database = firebase.database();
 
 // Placeholder function to log what is on the database.
 database.ref().on("value", function(snapshot) {
-    console.log(database);
+    // console.log(database);
 });
 
 // Function to pull data from database and write it into html.
@@ -29,19 +29,43 @@ function datapull() {
     database.ref().on("child_added", function(childSnapshot) {
 
         // Console logging database values.
-        console.log(childSnapshot.val().newTrainNameDB);
-        console.log(childSnapshot.val().newTrainDestinationDB);
-        console.log(childSnapshot.val().newTrainFirstDB);
-        console.log(childSnapshot.val().newTrainFrequencyDB);
+        // console.log(childSnapshot.val().newTrainNameDB);
+        // console.log(childSnapshot.val().newTrainDestinationDB);
+        // console.log(childSnapshot.val().newTrainFirstDB);
+        // console.log(childSnapshot.val().newTrainFrequencyDB);
 
-        timeRemaining();
+        // timeRemaining();
+        
+        //Time Remaining calculation. 
+        var tFrequency = childSnapshot.val().newTrainFrequencyDB;
+        var firstTime = childSnapshot.val().newTrainFirstDB;
+        console.log(childSnapshot.val().newTrainNameDB + ": First Train: " + firstTime + " | Frequency " + tFrequency);
 
+        // Converting given time to workable variable
+        var firstTimeConverted = moment(firstTime, "HHmm").subtract(1, "days");
+        console.log("Converted time: " + firstTimeConverted);
+
+        // Setting Current Time
+        var currentTime = moment();
+
+        // Difference between the times.
+        var diffTime = moment().diff(moment(firstTimeConverted), "minutes")
+        console.log("Difference in Time: " + diffTime);
+
+        // Time apart (remainder).
+        var tRemainder = diffTime % tFrequency;
+        
+        // Minutes until next train.
+        var tMinutesTillTrain = tFrequency - tRemainder;
+
+
+        // Creating a new row and appending new values to the row.
         var newRow = $("<tr>");
         newRow.append("<td>" + childSnapshot.val().newTrainNameDB + "</td>");
         newRow.append("<td>" + childSnapshot.val().newTrainDestinationDB + "</td>");
-        newRow.append("<td>" + childSnapshot.val().newTrainFrequencyDB + "</td>");
+        newRow.append("<td>" + tMinutesTillTrain + " minutes</td>");
 
-        console.log(newRow);
+        // console.log(newRow);
         $("tbody").append(newRow);
     }); 
 
@@ -49,7 +73,17 @@ function datapull() {
 
 // Function to calculate time remaining.
 function timeRemaining() {
+    
+    // Declaring Frequency and First time for each train.
+    // var tFrequency = this.childSnapshot.val().newTrainFrequencyDB;
+    // var firstTime = this.childSnapshot.val().newTrainFirstDB;
+    // console.log("First Train: " + firstTime + " | Frequency" + tFrequency);
+};
 
+function runClock() {
+    var currentTime = moment();
+    console.log("Current Time: " + moment(currentTime).format("HH:mm"));
+    $("#currentTime").html(moment(currentTime).format("HH:mm"));
 };
 
 
@@ -83,5 +117,6 @@ $(document).ready(function() {
     });
 
     datapull();
+    runClock();
 
 });
