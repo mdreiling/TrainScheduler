@@ -15,6 +15,9 @@ firebase.initializeApp(config);
 // Setting firebase database to the database variable.
 var database = firebase.database();
 
+// Setting empty trains array.
+var trainsArray = [];
+var trainNumber = 1;
 
 // Functions ==================================================
 
@@ -34,71 +37,109 @@ function datapull() {
         // console.log(childSnapshot.val().newTrainFirstDB);
         // console.log(childSnapshot.val().newTrainFrequencyDB);
 
-        // timeRemaining();
+        // Pushing new train values into the array.
+        trainsArray.push({
+            TrainName: childSnapshot.val().newTrainNameDB,
+            TrainDestination: childSnapshot.val().newTrainDestinationDB,
+            TrainFirst: childSnapshot.val().newTrainFirstDB,
+            TrainFrequency: childSnapshot.val().newTrainFrequencyDB,
+            TrainNumber: trainNumber
+        });
         
-        //Time Remaining calculation. 
-        var tFrequency = childSnapshot.val().newTrainFrequencyDB;
-        var firstTime = childSnapshot.val().newTrainFirstDB;
-        // console.log(childSnapshot.val().newTrainNameDB + ": First Train: " + firstTime + " | Frequency " + tFrequency);
+        // Logging addition of each train the the console.
+        // console.log(trainsArray);
 
-        // Converting given time to workable variable
-        var firstTimeConverted = moment(firstTime, "HHmm").subtract(1, "days");
-        // console.log("Converted time: " + firstTimeConverted);
+        // Increasing Train Number
+        trainNumber++;
 
-        // Difference between the times.
-        var diffTime = moment().diff(moment(firstTimeConverted), "minutes")
-        // console.log("Difference in Time: " + diffTime);
+        // Call time remaining, sort array, and build table functions.
+        timeRemaining();
+        sortArray();
+        buildTable();
 
-        // Time apart (remainder).
-        var tRemainder = diffTime % tFrequency;
-        
-        // Minutes until next train.
-        var tMinutesTillTrain = tFrequency - tRemainder;
-
-
-        // Creating a new row and appending new values to the row.
-        var newRow = $("<tr>");
-        newRow.append("<td>" + childSnapshot.val().newTrainNameDB + "</td>");
-        newRow.append("<td>" + childSnapshot.val().newTrainDestinationDB + "</td>");
-        
-        // Arriving/Boarding/Departing/Time Logic
-        if (tMinutesTillTrain < 1) {
-            newRow.append("<td>DEPARTING</td>");
-        }
-
-        else if (tMinutesTillTrain < 3) {
-            newRow.append("<td>BOARDING</td>");
-        }
-
-        else if (tMinutesTillTrain < 5) {
-            newRow.append("<td>ARRIVING</td>");
-        }
-        
-        else {
-            newRow.append("<td>" + tMinutesTillTrain + " minutes</td>");
-        }
-
-        // console.log(newRow);
-        $("tbody").append(newRow);
     }); 
-
-    runClock();
 
 };
 
 // Function to calculate time remaining.
 function timeRemaining() {
     
-    // Declaring Frequency and First time for each train.
-    // var tFrequency = this.childSnapshot.val().newTrainFrequencyDB;
-    // var firstTime = this.childSnapshot.val().newTrainFirstDB;
-    // console.log("First Train: " + firstTime + " | Frequency" + tFrequency);
+    let j = trainNumber - 2;
+    // console.log(trainsArray[j]);
+
+    //Time Remaining calculation. 
+    // console.log("Train Array Position Output: " + (trainNumber - 2));
+    var tFrequency = parseInt(trainsArray[j].TrainFrequency);
+    var firstTime = trainsArray[j].TrainFirst;
+    // console.log(trainsArray[j].TrainName + ": First Train: " + firstTime + " | Frequency " + tFrequency);
+
+    // Converting given time to workable variable
+    var firstTimeConverted = moment(firstTime, "HHmm").subtract(1, "days");
+    // console.log("Converted time: " + firstTimeConverted);
+
+    // Difference between the times.
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes")
+    // console.log("Difference in Time: " + diffTime);
+
+    // Time apart (remainder).
+    var tRemainder = diffTime % tFrequency;
+    
+    // Minutes until next train.
+    tMinutesTillTrain = tFrequency - tRemainder;
+    trainsArray[j].TrainTimeRemaining = tMinutesTillTrain;
+    // console.log("Time Remaining until " + trainsArray[j].TrainName + " arrives: " + tMinutesTillTrain);
+    // console.log(trainsArray);
+    
 };
 
+// Function to take current time and push it into current time span.
 function runClock() {
     var currentTime = moment();
     // console.log("Current Time: " + moment(currentTime).format("HH:mm"));
     $("#currentTime").html(moment(currentTime).format("HH:mm"));
+};
+
+// Function to sort table by time remaining.
+function sortArray() {
+    
+    trainsArray.sort(function(a, b) {return a.TrainTimeRemaining - b.TrainTimeRemaining});
+    console.log(trainsArray);
+};
+
+function buildTable() {
+
+    // Clear existing table.
+    $("tbody").empty();   
+
+    // For loop to build table from Array.
+    for (k = 0; k < trainsArray.length; k++) {
+        
+        // Creating a new row and appending new values to the row.
+        var newRow = $("<tr>");
+        newRow.append("<td>" + trainsArray[k].TrainName + "</td>");
+        newRow.append("<td>" + trainsArray[k].TrainDestination + "</td>");
+
+        // Arriving/Boarding/Departing/Time Logic
+        if (trainsArray[k].TrainTimeRemaining < 1) {
+            newRow.append("<td>DEPARTING</td>");
+        }
+
+        else if (trainsArray[k].TrainTimeRemaining < 3) {
+            newRow.append("<td>BOARDING</td>");
+        }
+
+        else if (trainsArray[k].TrainTimeRemaining < 5) {
+            newRow.append("<td>ARRIVING</td>");
+        }
+
+        else {
+            newRow.append("<td>" + trainsArray[k].TrainTimeRemaining + "</td>");
+        }
+
+        // console.log(newRow);
+        $("tbody").append(newRow);
+
+    }
 };
 
 
@@ -134,6 +175,6 @@ $(document).ready(function() {
     });
 
     datapull();
-    setInterval(runClock(), 1000);
+    setInterval(runClock(), 60000);
 
 });
