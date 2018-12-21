@@ -27,10 +27,10 @@ var trainNumber = 1;
 // });
 
 // Function to pull data from database and write it into html.
-function datapull() {
+function runData() {
 
     database.ref().on("child_added", function(childSnapshot) {
-
+        
         // Console logging database values.
         // console.log(childSnapshot.val().newTrainNameDB);
         // console.log(childSnapshot.val().newTrainDestinationDB);
@@ -51,14 +51,15 @@ function datapull() {
 
         // Increasing Train Number
         trainNumber++;
+        // console.log(trainNumber);
 
         // Call time remaining, sort array, and build table functions.
         timeRemaining();
         sortArray();
         buildTable();
-
     }); 
 
+    
 };
 
 // Function to calculate time remaining.
@@ -92,30 +93,38 @@ function timeRemaining() {
     
 };
 
-// Function to take current time and push it into current time span.
+// Function to run every minute to update the clock and trains.
 function runClock() {
-    var currentTime = moment();
-    // console.log("Current Time: " + moment(currentTime).format("HH:mm"));
-    $("#currentTime").html(moment(currentTime).format("HH:mm"));
+        
+    // Setting current time and pushing it into the current time span
+    $("#currentTime").html(moment().format("HH:mm:ss"));
+
 };
 
 // Function to sort table by time remaining.
 function sortArray() {
     
     trainsArray.sort(function(a, b) {return a.TrainTimeRemaining - b.TrainTimeRemaining});
-    console.log(trainsArray);
+    // console.log(trainsArray);
 };
 
 function buildTable() {
 
     // Clear existing table.
-    $("tbody").empty();   
+    $("tbody").empty();
+
+    // Create new table.
+    // newTable = $("<tbody>");
+    // newTable.addAttr("id", "trainTimetable");
+    // $("thead").append(newTable);
+
 
     // For loop to build table from Array.
     for (k = 0; k < trainsArray.length; k++) {
         
         // Creating a new row and appending new values to the row.
         var newRow = $("<tr>");
+        newRow.addClass("timetableRow")
         newRow.append("<td>" + trainsArray[k].TrainName + "</td>");
         newRow.append("<td>" + trainsArray[k].TrainDestination + "</td>");
 
@@ -137,10 +146,19 @@ function buildTable() {
         }
 
         // console.log(newRow);
-        $("tbody").append(newRow);
+        $("#trainTimetable").append(newRow);
 
     }
+
+    console.log("Build Table Ran")
 };
+
+// function runData() {
+//     console.log("Post runData: " + trainsArray);
+//     // timeRemaining();
+//     // sortArray();
+//     // buildTable();
+// }
 
 
 // Page Functions ==================================================
@@ -152,6 +170,8 @@ $(document).ready(function() {
 
         event.preventDefault();
 
+        console.log(trainsArray);
+        
         // Setting new inputs as variables.
         var newTrainName = $("#newTrainName").val().trim();
         var newTrainDestination = $("#newTrainDestination").val().trim();
@@ -174,7 +194,10 @@ $(document).ready(function() {
 
     });
 
-    datapull();
-    setInterval(runClock(), 60000);
+    runData();
+    // childAdded();
+    // setInterval(runData, (1000) * 5);
+    setInterval(runClock, (1000) * 1);
+    // console.log(trainsArray);
 
 });
