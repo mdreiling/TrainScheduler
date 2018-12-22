@@ -5,19 +5,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS !CHANGE TO MATERIALIZE! -->
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Staatliches" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css" type="text/css">
 
     <title>Train Timetables</title>
   </head>
   <body>
 
-    <div class="container">
-        <div class="jumbotron jumbotron-fluid" id="header">
+    <div class="container" id="stationSign">
+        <div class="jumbotron jumbotron-fluid" id="jumbotronHeader">
             <div class="container">
-            <h1 class="display-4" ><i class="far fa-newspaper"></i> <b>Train Timetables</b></h1>
-            <p class="lead">Current Time: <span id="currentTime"></span></p>
+            <h1 class="display-4" ><i class="far fa-newspaper"></i> <b><span id="kingsCrossStation">King's Cross Station</b></span></h1>
+            <h3>Departures: London North Eastern Railway</h3>
             </div>
         </div>
     </div>
@@ -25,68 +26,87 @@
 
     <div class="container">
 
-        <div class="container" class="contentSection" id="currentEmployeesArea">
-                
-            <p class="sectionHeader"><i class="far fa-list-alt"></i>Upcoming Trains</p>
-                <table class="table">
-                    <thead>
-                        <tr id="tableHeader">
-                            <th scope="col" id="trainName">Train Name</th>
-                            <th scope="col" id="trainDestination">Destination</th>
-                            <th scope="col" id="nextTrain">Minutes until Next Train</th>
-                        </tr>
-                    </thead>
-                    <tbody id="trainTimetable"></tbody>
-                </table>
-
+        <div class="container" class="contentSection" id="existingTrains">
+            
+            <div class="row">
+                <h4 class="lead col-4">Upcoming Trains</h4>
+                <button type="button" class="btn btn-dark col-4" data-toggle="modal" data-target="#exampleModalCenter">Add New Train</button>
+                <h4 class="lead col-4" id="currentTimeForCSS">Current Time: <span id="currentTime"></span></h4>
             </div>
 
-            <br>
+            <table class="table">
 
-            <div class="container" class="contentSection" id="addEmployeeArea">
+                <thead>
+                    <tr id="tableHeader">
+                        <th scope="col" id="trainName">Train Name</th>
+                        <th scope="col" id="trainDestination">Destination</th>
+                        <th scope="col" id="nextTrain">Minutes until Next Train</th>
+                    </tr>
+                </thead>
                 
-                <p class="sectionHeader"><i class="far fa-list-alt"></i>Add Train</p>
-                    <form id="formDiv">
-                        <div class="form-group">
-                            <label>Train Name:</label>
-                            <input type="text" class="form-control" id="newTrainName" placeholder="Flying Scotsman">
-                        </div>
-        
-                        <div class="form-group">
+                <tbody id="trainTimetable"></tbody>
+            </table>
+
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form id="formDiv">
+                            <div class="form-group">
+                                <label>Train Name:</label>
+                                <input type="text" class="form-control" id="newTrainName" placeholder="Flying Scotsman">
+                            </div>
+                        
+                            <div class="form-group">
                                 <label>Destination:</label>
                                 <input type="text" class="form-control" id="newTrainDestination" placeholder="Edinburgh">
                             </div>
-        
-                        <div class="form-group">
-                            <label>First Train of the Day (Military Time):</label>
-                            <input type="number" class="form-control" id="newTrainFirst" placeholder="0715">
-                        </div>
                         
-                        <div class="form-group">
-                            <label>Frequency (Minutes):</label>
-                            <input type="number" class="form-control" id="newTrainFrequency" placeholder="30">
-                        </div>
+                            <div class="form-group">
+                                <label>First Train of the Day (Military Time):</label>
+                                <input type="number" class="form-control" id="newTrainFirst" placeholder="0715">
+                            </div>
+                                    
+                            <div class="form-group">
+                                <label>Frequency (Minutes):</label>
+                                <input type="number" class="form-control" id="newTrainFrequency" placeholder="30">
+                            </div> 
+                                    
+                        </form>
+                    </div>
 
-                        
-                    
-                    </form>
-        
-
-                    <button class="btn btn-primary col-2" type="submit" id="addNewTrain">Add New Train</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-dark" id="addNewTrain">Add New Train</button>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    
-    <!-- Firebase and Moment JS -->
-    <script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
-    <script src="assets/javascript/moment.js"></script>
+</div>
 
-    <script src="assets/javascript/logic.js"></script>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+<!-- Firebase and Moment JS -->
+<script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
+<script src="assets/javascript/moment.js"></script>
+
+<script src="assets/javascript/logic.js"></script>
 
 </body>
 </html>

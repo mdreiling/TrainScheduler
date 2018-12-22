@@ -1,0 +1,38 @@
+body {
+    font-family: 'Staatliches', cursive;
+    color: #ffd711;
+}
+
+.container {
+    background-color: #222222;
+}
+
+#jumbotronHeader {
+    background-color: #222222;
+    margin-bottom: -15px;
+}
+
+#kingsCrossStation {
+    color: #ffffff;
+    font-size: 64pt;
+}
+
+#currentTimeForCSS {
+    text-align: right;
+}
+
+#currentTime {
+    color: #ffffff;
+}
+
+.lead {
+    padding-top: 10px;
+}
+
+table {
+    margin-top: 20px;
+}
+
+thead {
+    color: #ffffff;
+}

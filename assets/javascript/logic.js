@@ -29,6 +29,8 @@ var trainNumber = 1;
 // Function to pull data from database and write it into html.
 function runData() {
 
+    clearTable();
+    
     database.ref().on("child_added", function(childSnapshot) {
         
         // Console logging database values.
@@ -108,23 +110,26 @@ function sortArray() {
     // console.log(trainsArray);
 };
 
+function clearTable() {
+    $("td").remove();
+    
+    // Create new table.
+    // var newTable = $("<tbody>");
+    // newTable.id = "trainTimetable";
+    // $("tbody").append(newTable);
+};
+
 function buildTable() {
 
     // Clear existing table.
     $("tbody").empty();
-
-    // Create new table.
-    // newTable = $("<tbody>");
-    // newTable.addAttr("id", "trainTimetable");
-    // $("thead").append(newTable);
-
 
     // For loop to build table from Array.
     for (k = 0; k < trainsArray.length; k++) {
         
         // Creating a new row and appending new values to the row.
         var newRow = $("<tr>");
-        newRow.addClass("timetableRow")
+        newRow.addClass("timeTableRow")
         newRow.append("<td>" + trainsArray[k].TrainName + "</td>");
         newRow.append("<td>" + trainsArray[k].TrainDestination + "</td>");
 
@@ -148,9 +153,9 @@ function buildTable() {
         // console.log(newRow);
         $("#trainTimetable").append(newRow);
 
-    }
+    };
 
-    console.log("Build Table Ran")
+    // console.log("Build Table Ran");
 };
 
 // function runData() {
@@ -197,6 +202,7 @@ $(document).ready(function() {
     runData();
     // childAdded();
     // setInterval(runData, (1000) * 5);
+    // setInterval(clearTable, (1000 * 5))
     setInterval(runClock, (1000) * 1);
     // console.log(trainsArray);
 
